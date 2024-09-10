@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Privilege;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Group>
  */
-class GroupFactory extends Factory
+class groupFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +19,7 @@ class GroupFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'privileges_id' => PrivilegeFactory::factory(),
+            'privileges_id' => Privilege::factory(),
         ];
     }
 }
