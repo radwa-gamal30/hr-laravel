@@ -4,30 +4,30 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-
 class UserController extends Controller
 {
-    // public function store(Request $request)
-    // {
-    //     // Validate the incoming request
-    //     $request->validate([
-    //         'fullname' => 'required|string|max:255',
-    //         'email' => 'required|string|email|max:255|unique:user_register',
-    //         'username' => 'required|string|max:255|unique:user_register',
-    //         'password' => 'required|string|min:8|confirmed',
-    //         'group_id' => 'required|exists:groups,id',
-    //     ]);
+    public function store(Request $request)
+    {
+        // $validateData=$request->validate([
+        //     'fullname' =>['required','string','regex:/^[\pL\s\-]+$/u'],
+        //     'email'=>['required','string','email','unique:users_register,email'],
+        //     'username'=>['required','min:5','string'],
+        //     'password'=>['required','password','min:8']
+        // ]);
+        $user = User::create([
+            'fullname' => $request['fullname'],
+            'email' => $request['email'],
+            'password' =>$request['password'],
+            'username' => $request['username'],
+            'group_id' => $request['group_id'],
 
-    //     // Create the user
-    //     $user = User::create([
-    //         'fullname' => $request->input('fullname'),
-    //         'email' => $request->input('email'),
-    //         'password' => bcrypt($request->input('password')),
-    //         'username' => $request->input('username'),
-    //         'group_id' => $request->input('group_id'),
-    //     ]);
-
-    //     // Return a JSON response
-    //     return response()->json(['message' => 'User added successfully!', 'user' => $user], 201);
-    // }
+        ]);
+        return response()->json(['message' => 'User added successfully!'], 201);
+    }
+    public function destroy($id)
+    {
+        $user=User::find($id);
+        $user->delete();
+        return response()->json(['message' => 'User deleted successfully!'], 201);
+    }
 }
