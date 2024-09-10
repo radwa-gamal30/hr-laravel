@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('groups', function (Blueprint $table) {
-            $table->id();  
-            $table->string('name'); 
-            $table->foreignId('privileges_id')->constrained('privileges')->onDelete('cascade');  
-            $table->timestamps();  
+            $table->id();
+            $table->string('name');
+            $table->foreignId('privileges_id')->constrained('privileges')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
