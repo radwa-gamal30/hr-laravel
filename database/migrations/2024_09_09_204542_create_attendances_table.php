@@ -17,11 +17,11 @@ return new class extends Migration
             $table->unsignedBigInteger('salary_action_id');
             $table->unsignedBigInteger('weekend_id')->nullable();
             $table->unsignedBigInteger('holiday_id')->nullable();
-            $table->string('status');
+            $table->string('status')->default('none');
             $table->time('check_in');
             $table->time('check_out');
             $table->date('date');
-            $table->decimal('hours', 5, 2);
+            $table->decimal('hours', 5, 2)->default(0);
 
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->foreign('salary_action_id')->references('id')->on('salary_actions')->onDelete('cascade');
