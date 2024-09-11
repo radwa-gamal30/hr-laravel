@@ -2,8 +2,8 @@
 
 
 use App\Http\Controllers\HolidayController;
-
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\EmployeeController;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeekendController;
@@ -50,3 +50,6 @@ Route::resource('weekend', WeekendController::class);
 Route::resource('attendance', AttendanceController::class);
 // Route::delete('users', [UserController::class, 'delete']);
 
+// attendance search 
+Route::get('employee/attendances/{name}', [EmployeeController::class, 'getEmployeeAttendancesByName']);
+Route::get('/attendances-by-date', [AttendanceController::class, 'getAttendancesByDate']);

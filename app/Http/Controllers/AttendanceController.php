@@ -39,4 +39,15 @@ class AttendanceController extends Controller
         
 
     }
+    public function getAttendancesByDate()
+    {
+        $date = '2024-09-11';  
+
+        try {
+            $attendances = Attendance::whereDate('date', $date)->get();
+            return response()->json($attendances);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }

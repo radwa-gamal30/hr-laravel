@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\user_register;
 use Illuminate\Http\Request;
-use App\Models\User;
 class UserController extends Controller
 {
     public function store(Request $request)
@@ -14,7 +13,7 @@ class UserController extends Controller
         //     'username'=>['required','min:5','string'],
         //     'password'=>['required','password','min:8']
         // ]);
-        $user = User::create([
+        $user = user_register::create([
             'fullname' => $request['fullname'],
             'email' => $request['email'],
             'password' =>$request['password'],
@@ -26,7 +25,7 @@ class UserController extends Controller
     }
     public function destroy($id)
     {
-        $user=User::find($id);
+        $user=user_register::find($id);
         $user->delete();
         return response()->json(['message' => 'User deleted successfully!'], 201);
     }

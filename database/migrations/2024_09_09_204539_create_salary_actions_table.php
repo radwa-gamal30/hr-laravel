@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('salary_actions', function (Blueprint $table) {
             $table->id();  
+            $table->unsignedBigInteger('employee_id');
             $table->date('date');  
             $table->enum('type', ['bonus', 'deduction']);  
             $table->decimal('amount', 10, 2); 
             $table->decimal('hours', 5, 2)->nullable();  
             $table->text('details')->nullable();  
             $table->timestamps(); 
+
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
         });
     }
 
