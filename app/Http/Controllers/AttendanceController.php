@@ -22,10 +22,10 @@ class AttendanceController extends Controller
             'weekend_id'=>'nullable',
             'holiday_id'=>'nullable',
             'status'=>'required|string|max:255',
-            'check_in'=>'required',
-            'check_out'=>'required', 
-            'date'=>'required', 
-            'hours'=>'required', 
+            'check_in'=>'required|date_format:H:i:s',
+            'check_out'=>'required|date_format:H:i:s', 
+            'date'=>'required|date_format:Y-m-d', 
+            'hours'=>'required|numeric', 
 
         ]);
         $attendance=attendance::create($validated);
@@ -53,10 +53,10 @@ class AttendanceController extends Controller
             'weekend_id'=>'nullable',
             'holiday_id'=>'nullable',
             'status'=>'required|string|max:255',
-            'check_in'=>'required',
-            'check_out'=>'required', 
-            'date'=>'required', 
-            'hours'=>'required', 
+            'check_in'=>'required|date_format:H:i:s',
+            'check_out'=>'required|date_format:H:i:s', 
+            'date'=>'required|date_format:Y-m-d', 
+            'hours'=>'required|numeric', 
 
         ]);
 
