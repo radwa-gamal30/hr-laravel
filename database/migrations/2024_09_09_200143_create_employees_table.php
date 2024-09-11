@@ -12,17 +12,17 @@ return new class extends Migration
     public function up()
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id(); 
-            $table->string('name'); 
-            $table->string('phone'); 
-            $table->decimal('salary', 10, 2); 
+            $table->id();
+            $table->string('name');
+            $table->string('phone');
+            $table->decimal('salary', 10, 2);
             $table->date('hire_date');
             $table->string('ssn')->unique();
-            $table->text('address'); 
+            $table->text('address');
             $table->unsignedBigInteger('department_id');
-            $table->enum('gender', ['male', 'female']); 
-            $table->date('doa'); 
-            $table->timestamps(); 
+            $table->enum('gender', ['male', 'female']);
+            $table->date('doa');
+            $table->timestamps();
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
         });
     }
