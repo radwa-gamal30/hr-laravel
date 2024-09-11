@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class EmployeeController extends Controller
 {
-    public function salary($empId)
+    public function netSalary($empId)
     {
         //get basic salary of employee
         $employee=employee::find($empId);
@@ -27,21 +27,38 @@ class EmployeeController extends Controller
         $totalBonuses = salary_actions::where('employee_id', $empId)
             ->where('type', 'bonus')
             ->sum('amount');
-            return $totalBonuses;
         //get total deduction
-        // $totalDeductions = salary_actions::where('employee_id', $empId)
-        //     ->where('type', 'deduction')
-        //     ->sum('amount');
+        $totalDeductions = salary_actions::where('employee_id', $empId)
+            ->where('type', 'deduction')
+            ->sum('amount');
 
-        // $hourlyBonus = 10;
-        // $hourlyDeduction = (($basicSalary/22)/8)*2;
+        $hourlyBonus = ($basicSalary/22)/8;
+        $hourlyDeduction = ($basicSalary/22)/8;
 
-        // $bonusAmount = $hourlyBonus * $totalHoursWorked;
-        // $deductionAmount = $hourlyDeduction * $totalHoursWorked;
-        // // return $totalDaysAttended;
+        $bonusAmount = $hourlyBonus * $totalHoursWorked;
+        $deductionAmount = $hourlyDeduction * $totalHoursWorked;
+        // return $totalDaysAttended;
 
-        // $netSalary = $basicSalary + $totalBonuses - $totalDeductions - $deductionAmount + $bonusAmount;
-        // return $netSalary;
+        $netSalary = $basicSalary + $totalBonuses - $totalDeductions - $deductionAmount + $bonusAmount;
+        return $netSalary;
+    }
 
+    public function getEmployeeAttendancesByName( $employeeName)
+    {
+        // Find the employee by name
+        $employee = Employee::where('name', $employeeName)->first();
+
+        if (!$employee) {
+            return response()->json(['message' => 'No attendances found for this employee'], 404);
+        }
+
+        // Get the employee ID
+        $employeeId = $employee->id;
+
+        // Find attendances for the employee
+        $attendances = attendance::where('employee_id', $employeeId)->get();
+
+        return $attendances;
     }
 }
+
