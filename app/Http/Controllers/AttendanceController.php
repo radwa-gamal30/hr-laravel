@@ -26,8 +26,8 @@ class AttendanceController extends Controller
             'date'=>'required|date_format:Y-m-d', 
 
         ]);
-        $check_in=new Carbon($validated['check_in']);
-        $check_out=new Carbon($validated['check_out']);
+        $check_in= Carbon::parse($validated['check_in']);
+        $check_out=Carbon::parse($validated['check_out']);
         $hours=$check_out->diffInHours($check_in);
 
         if($hours==0){
@@ -45,8 +45,9 @@ class AttendanceController extends Controller
             'employee_id'=>$validated['employee_id'],
             'salary_action_id'=>$validated['salary_action_id'],
             'weekend_id'=>$validated['weekend_id'],
-            'check_in'=>$validated['check_in'],
-            'check_out'=>$validated['check_out'],
+            'holiday_id'=>$validated['holiday_id'],
+            'check_in'=>$check_in,
+            'check_out'=>$check_out,
             'date'=>$validated['date'],
             'hours'=>$hours,
             'status'=>$status,
@@ -76,20 +77,46 @@ class AttendanceController extends Controller
             'salary_action_id'=>'required|exists:salary_actions,id',
             'weekend_id'=>'nullable',
             'holiday_id'=>'nullable',
-            'status'=>'required|string|max:255',
             'check_in'=>'required|date_format:H:i:s',
             'check_out'=>'required|date_format:H:i:s', 
             'date'=>'required|date_format:Y-m-d', 
-            'hours'=>'required|numeric', 
-
+          
         ]);
 
-        $attendance->update($validated);
+        $check_in=new Carbon($validated['check_in']);
+        $check_out=new Carbon($validated['check_out']);
+        $hours=$check_out->diffInHours($check_in);
 
+        if($hours==0){
+            $status='absent';
+        }
+        elseif($hours==8){
+            $status='present';
+        }
+        elseif($hours>8){
+            $status='bonus';
+        }else{
+            $status='deduction';
+        }
+        $attendance->update([
+            'employee_id'=>$validated['employee_id'],
+            'salary_action_id'=>$validated['salary_action_id'],
+            'weekend_id'=>$validated['weekend_id'],
+            'holiday_id'=>$validated['holiday_id'],
+            'check_in'=>$check_in,
+            'check_out'=>$check_out,
+            'date'=>$validated['date'],
+            'hours'=>$hours,
+            'status'=>$status,
+        ]);
         return response()->json([
-        'message'=>'attendance updated successfully',
-        'data'=>$attendance,
-        201]);
+            'message'=>'attendance updated successfully',
+            'attendance'=>$attendance,
+            'hours'=>$hours,
+            'status'=>$status,
+            201]) ;
+
+
 
     }
     public function destroy(attendance $attendance){
