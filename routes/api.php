@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('holidays',HolidayController::class);
 Route::resource('users', UserController::class);
+Route::get('/employee/{id}',[EmployeeController::class,'netSalary']);
 Route::resource('weekend', WeekendController::class);
 Route::resource('attendance', AttendanceController::class);
 Route::get('employee/attendances/{name}', [EmployeeController::class, 'getEmployeeAttendancesByName']);
