@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/' , function(){ 
+Route::get('/' , function(){
     return 'Hello';}
     ) ;
 
@@ -31,25 +31,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route::post('users', [UserController::class, 'store']);
 
 Route::apiResource('holidays',HolidayController::class);
-
-// Route::get('holidays',[HolidayController::class,'index']);
-// Route::get('/holidays/{id}',[HolidayController::class,'show'])->name('holidays.view');
-
-// Route::delete('/holidays/{id}', [HolidayController::class, 'destroy'])->name('holidays.destroy');
-
-// Route::post('/holidays/store',[HolidayController::class,'store'])->name('holidays.store');
-
-// Route::get('/holidays/{id}/edit',[HolidayController::class,'edit'])->name('holidays.edit');
-
-// Route::put('/holidays/{id}/update',[HolidayController::class,'update'])->name('holidays.update');
-
-// Route::get('/holidays/{id}/create',[HolidayController::class,'create'])->name('holidays.create');
-
 Route::resource('users', UserController::class);
+Route::get('/employee/{id}',[EmployeeController::class,'netSalary']);
 Route::resource('weekend', WeekendController::class);
 Route::resource('attendance', AttendanceController::class);
-// Route::delete('users', [UserController::class, 'delete']);
-
-// attendance search 
 Route::get('employee/attendances/{name}', [EmployeeController::class, 'getEmployeeAttendancesByName']);
 Route::get('/attendances-by-date', [AttendanceController::class, 'getAttendancesByDate']);
