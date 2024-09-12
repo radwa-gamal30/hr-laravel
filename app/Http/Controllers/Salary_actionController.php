@@ -18,5 +18,22 @@ class Salary_actionController extends Controller
             'message' => 'Salary retrieved successfully',
         ], 200);
     }
+
+    public function destroy($id)
+     {
+        
+        $Salary = salary_actions::findOrFail($id);
+
+        
+        $Salary->delete();
     
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Holiday deleted successfully',
+        ], 200);
+         
+     }
+     
+
 }
