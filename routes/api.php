@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\Salary_actionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +27,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route::post('users', [UserController::class, 'store']);
 
 Route::apiResource('holidays',HolidayController::class);
+
+Route::apiResource('attendances',AttendanceController::class);
+
+Route::apiResource('salaryActions',Salary_actionController::class);
+
+Route::get('holidays/month/{month}', [HolidayController::class, 'searchByMonth']);
 
 // Route::get('holidays',[HolidayController::class,'index']);
 // Route::get('/holidays/{id}',[HolidayController::class,'show'])->name('holidays.view');
