@@ -18,7 +18,6 @@ class AttendanceController extends Controller
     public function store (Request $request){
        $validated=$request->validate([
             'employee_id'=>'required|exists:employees,id',
-            'salary_action_id'=>'required|exists:salary_actions,id',
             'weekend_id'=>'nullable',
             'holiday_id'=>'nullable',
             'check_in'=>'required|date_format:H:i:s',
@@ -41,9 +40,11 @@ class AttendanceController extends Controller
         }else{
             $status='deduction';
         }
+
+
+           
         $attendance=attendance::create([
             'employee_id'=>$validated['employee_id'],
-            'salary_action_id'=>$validated['salary_action_id'],
             'weekend_id'=>$validated['weekend_id'],
             'holiday_id'=>$validated['holiday_id'],
             'check_in'=>$check_in,
@@ -52,6 +53,49 @@ class AttendanceController extends Controller
             'hours'=>$hours,
             'status'=>$status,
         ]);
+
+      
+    
+        $empsalary = $attendance ? $attendance->employee->salary : 0;
+
+      if($hours !=8)
+      {
+     
+        $types=" ";
+        $rewordHoures=0;
+        $Amounts=0;
+        $discript="";
+      
+        
+        if($hours>8){
+             $types="bonus";
+             $rewordHoures=$hours-8;
+             $Amounts=(($empsalary/30)/8)*$rewordHoures;
+             $discript="Bouns Houres Added ";
+
+        }
+        elseif($hours<8)
+        {
+            $types="deduction";
+            $rewordHoures=8-$hours;
+            $Amounts=(($empsalary/22)/8)*$rewordHoures;
+            $discript="deduction Houres Added ";
+        }
+      
+        $attendance -> salaryAction()->create([
+            'employee_id' => $validated['employee_id'],
+            'attendance_id' => $attendance->id,
+            'date' => $validated['date'],
+            'type' => $types,
+            'amount' => $Amounts,
+            'hours' => $rewordHoures,
+            'details' => $discript,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+      }
+
+     
         return response()->json([
             'message'=>'attendance added successfully',
             'attendance'=>$attendance,

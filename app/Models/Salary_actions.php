@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class salary_actions extends Model
 {
     use HasFactory;
-    protected $fillable = ['id','date','type','amount','hours','details'];
+    protected $fillable = ['id','date','type','amount','hours','details','employee_id','attendance_id'];
     public function attendance()
     {
-        return $this->hasMany(Attendance::class);
+        return $this->belongsTo(Attendance::class);
     }
 }
