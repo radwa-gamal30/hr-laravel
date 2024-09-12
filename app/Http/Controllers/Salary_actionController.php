@@ -18,4 +18,5 @@ class Salary_actionController extends Controller
             'message' => 'Salary retrieved successfully',
         ], 200);
     }
+    
 }

@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class weekend extends Model
 {
-    protected $fillable = ['id','name'];
+    protected $fillable = [
+        'name'
+    ];
     use HasFactory;
     public function attendance()
     {
