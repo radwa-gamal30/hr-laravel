@@ -30,7 +30,7 @@ class Salary_actionController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'Holiday deleted successfully',
+            'message' => 'Salary Action deleted successfully',
         ], 200);
          
      }
