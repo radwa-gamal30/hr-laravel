@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Salary_actionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WeekendController;
 use Illuminate\Http\Request;
@@ -23,4 +24,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('users', UserController::class);
 Route::resource('weekend', WeekendController::class);
 Route::resource('attendance', AttendanceController::class);
+Route::resource('salaryaction', Salary_actionController::class);
 // Route::delete('users', [UserController::class, 'delete']);
