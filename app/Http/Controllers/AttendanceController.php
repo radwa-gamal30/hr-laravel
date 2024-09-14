@@ -121,21 +121,19 @@ class AttendanceController extends Controller
         $hours=$check_out->diffInHours($check_in);
 
         //check for status
+        $status=$this->getStatus($hours);
+        $validated['weekend_id']= $this->isweekend($validated['date']);
+        $validated['holiday_id']= $this->isholiday($validated['date']);
 
-        if($hours==0){
-            $status='absent';
-        }
-        elseif($hours==8){
-            $status='present';
-        }
-        elseif($hours>8){
-            $status='bonus';
-        }else{
-            $status='deduction';
-        }
-
-
-
+        if ($validated['weekend_id']  ) {
+            return response()->json([
+                'message'=>'No attendance recorded on weekends.',200
+            ]) ; 
+                } elseif ($validated['holiday_id'] ) {
+                    return response()->json([
+                        'message'=>'No attendance recorded on Holidays.',200
+                    ]) ; 
+                        }
         $attendance->update([
             'employee_id'=>$validated['employee_id'],
             'weekend_id'=>$validated['weekend_id'],
@@ -146,56 +144,37 @@ class AttendanceController extends Controller
             'hours'=>$hours,
             'status'=>$status,
         ]);
+   
 
-        $empsalary = $attendance ? $attendance->employee->salary : 0;
 
-      if($hours !=8)
-      {
-     
-        $types='';
-        $rewordHoures=0;
-        $Amounts=0;
-        $discript="";
+           //check hours for slalry action
+           $empsalary = $attendance->employee->salary;
+           $workHours=8;
+       
+  
+           if($hours != $workHours){ 
+               $salaryAction=  $this->getSalaryAction($hours,$empsalary,$workHours);
+           
       
-        
-        if($hours>8){
-             $types="bonus";
-             $rewordHoures=$hours-8;
-             $Amounts=(($empsalary/30)/8)*$rewordHoures;
-             $discript="Bouns Houres Added ";
-
-        }
-        elseif($hours<8)
-        {
-            $types="deduction";
-            $rewordHoures=8-$hours;
-            $Amounts=(($empsalary/22)/8)*$rewordHoures;
-            $discript="deduction Houres Added ";
-        }
-      
-        $attendance -> salaryAction()->update([
-            'employee_id' => $validated['employee_id'],
-            'attendance_id' => $attendance->id,
-            'date' => $validated['date'],
-            'type' => $types,
-            'amount' => $Amounts,
-            'hours' => $rewordHoures,
-            'details' => $discript,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-      }
-
-
-
-
-
-        return response()->json([
-            'message'=>'attendance updated successfully',
-            'attendance'=>$attendance,
-            'hours'=>$hours,
-            'status'=>$status,
-            201]) ;
+           // create salary action
+       
+            $attendance->salaryAction()->create([
+           'employee_id' => $validated['employee_id'],
+           'attendance_id' => $attendance->id,
+           'date' => $validated['date'],
+           'type' =>$salaryAction['type'] ,
+           'amount' =>$salaryAction['amounts'] ,
+           'hours' =>$salaryAction['rewardHours'] ,
+           'details' =>$salaryAction['description'] ,
+           'created_at' => now(),
+           'updated_at' => now(),
+       ]);}
+       // json response
+       return response()->json([
+           'message' => 'Attendance added successfully',
+           'attendance' => $attendance,
+           'hours' => $hours,
+           'status' => $status,201 ]);
 
 
 
