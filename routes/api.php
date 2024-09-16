@@ -24,7 +24,7 @@ use App\Http\Controllers\api\AuthController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/' , function(){ 
+Route::get('/' , function(){
     return 'Hello';}
     ) ;
     
@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // });
 
 // Route::post('users', [UserController::class, 'store']);
+
 
 // Route::apiResource('holidays',HolidayController::class);
 
@@ -66,11 +67,13 @@ Route::get('holidays/month/{month}', [HolidayController::class, 'searchByMonth']
 
 // Route::get('/holidays/{id}/create',[HolidayController::class,'create'])->name('holidays.create');
 
+
+Route::resource('salaryaction', Salary_actionController::class);
+Route::apiResource('holidays',HolidayController::class);
+
 Route::resource('users', UserController::class);
+Route::get('/employee/{id}',[EmployeeController::class,'netSalary']);
 Route::resource('weekend', WeekendController::class);
 Route::resource('attendance', AttendanceController::class);
-// Route::delete('users', [UserController::class, 'delete']);
-
-// attendance search 
 Route::get('employee/attendances/{name}', [EmployeeController::class, 'getEmployeeAttendancesByName']);
 Route::get('/attendances-by-date', [AttendanceController::class, 'getAttendancesByDate']);
