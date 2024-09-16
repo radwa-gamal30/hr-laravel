@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('salary_actions', function (Blueprint $table) {
             $table->id();  
             $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('attendance_id');
             $table->date('date');  
             $table->enum('type', ['bonus', 'deduction']);  
             $table->decimal('amount', 10, 2); 
@@ -22,6 +23,8 @@ return new class extends Migration
             $table->timestamps(); 
 
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+            $table->foreign('attendance_id')->references('id')->on('attendances')->onDelete('cascade');
+
         });
     }
 

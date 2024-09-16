@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employee_id');
-            $table->unsignedBigInteger('salary_action_id');
             $table->unsignedBigInteger('weekend_id')->nullable();
             $table->unsignedBigInteger('holiday_id')->nullable();
             $table->string('status');
@@ -22,9 +21,7 @@ return new class extends Migration
             $table->time('check_out');
             $table->date('date');
             $table->decimal('hours', 5, 2);
-
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
-            $table->foreign('salary_action_id')->references('id')->on('salary_actions')->onDelete('cascade');
             $table->foreign('weekend_id')->references('id')->on('weekends')->onDelete('set null');
             $table->foreign('holiday_id')->references('id')->on('holidays')->onDelete('set null');
             $table->timestamps();
