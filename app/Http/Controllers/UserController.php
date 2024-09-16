@@ -7,22 +7,23 @@ use App\Models\User;
 class UserController extends Controller
 {
     public function store(Request $request)
-    {
-        // $validateData=$request->validate([
-        //     'fullname' =>['required','string','regex:/^[\pL\s\-]+$/u'],
-        //     'email'=>['required','string','email','unique:users_register,email'],
-        //     'username'=>['required','min:5','string'],
-        //     'password'=>['required','password','min:8']
-        // ]);
+    {   
+        $validateData=$request->validate([
+            'fullname' =>['required','string','regex:/^[\pL\s\-]+$/u'],
+            'email'=>['required','string','email','unique:user_register,email'],
+            'username'=>['required','min:5','string'],
+            'password'=>['required','string','min:8'],
+            'group_id'=>['required','exists:groups,id'],
+        ]);
         $user = User::create([
-            'fullname' => $request['fullname'],
-            'email' => $request['email'],
-            'password' =>$request['password'],
-            'username' => $request['username'],
-            'group_id' => $request['group_id'],
+            'fullname' => $validateData['fullname'],
+            'email' => $validateData['email'],
+            'password' =>bcrypt( $validateData['password']),
+            'username' => $validateData['username'],
+            'group_id' => $validateData['group_id'],
 
         ]);
-        return response()->json(['message' => 'User added successfully!'], 201);
+        return response()->json(['message' => 'User added successfully!','recently added'=>$user], 201);
     }
     public function destroy($id)
     {

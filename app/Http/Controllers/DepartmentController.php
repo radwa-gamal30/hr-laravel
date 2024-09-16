@@ -9,7 +9,7 @@ class DepartmentController extends Controller
 {
     public function index(){
         $departments=department::get();
-        return response()->json(['departments'=>$departments]);
+        return response()->json(['data'=>$departments]);
     }
    
      public function store(Request $request){
