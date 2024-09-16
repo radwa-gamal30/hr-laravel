@@ -28,6 +28,24 @@ class HolidayController extends Controller
         return response()->json(new HolidayResource($holiday), 200);
      }
 
+     public function searchByMonth($month)
+     {
+         $holidays = Holiday::whereMonth('holiday_date', $month)->get();
+
+         if ($holidays->isEmpty()) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'No holidays found for this month',
+             ], 404);
+         }
+
+         return response()->json([
+             'success' => true,
+             'message' => 'Holidays found',
+             'data' => HolidayResource::collection($holidays),
+         ], 200);
+     }
+
      public function store(Request $request)
      {
         // dd($request);
