@@ -97,15 +97,12 @@ class AttendanceController extends Controller
         
     public function update(Request $request,attendance $attendance){
         $validated=$request->validate([
-            'employee_id'=>'required|exists:employees,id',
-            'salary_action_id'=>'required|exists:salary_actions,id',
+            'employee_name'=>'required|exists:employees,name',
             'weekend_id'=>'nullable',
             'holiday_id'=>'nullable',
-            'status'=>'required|string|max:255',
             'check_in'=>'required|date_format:H:i:s',
             'check_out'=>'required|date_format:H:i:s', 
-            'date'=>'required|date_format:Y-m-d', 
-            'hours'=>'required|numeric',  
+            'date'=>'required|date_format:d-m-Y', 
 
         ]);
 
