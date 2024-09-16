@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\attendance;
+use App\Models\department;
+use App\Models\employee;
 use App\Models\Holiday;
 use App\Models\weekend;
 use Carbon\Carbon;
@@ -15,21 +17,19 @@ class AttendanceController extends Controller
 
 
     public function index(){
-        $attendanceList=attendance::get();
-        
-       
-        return response()->json(['data'=>$attendanceList,201]);
+        $attendanceList=attendance::with('employee.department')->get();
+        return response()->json(['data'=>$attendanceList],200);
     }
 
     public function store(Request $request)
     {
         // Validate the request
         $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',
+            'employee_id' => 'required|string|exists:employees,id',
             'weekend_id' => 'nullable',
             'holiday_id' => 'nullable',
-            'check_in' => 'required|date_format:H:i:s',
-            'check_out' => 'required|date_format:H:i:s',
+            'check_in' => 'required|date_format:H:i',
+            'check_out' => 'required|date_format:H:i',
             'date' => 'required|date_format:Y-m-d',
         ]);
     
@@ -52,11 +52,9 @@ class AttendanceController extends Controller
                         'message'=>'No attendance recorded on Holidays.',200
                     ]) ; 
                         }
-                  
+
                 $attendance = Attendance::create([
                     'employee_id' => $validated['employee_id'],
-                    'weekend_id' => $validated['weekend_id'],
-                    'holiday_id' => $validated['holiday_id'],
                     'check_in' => $check_in,
                     'check_out' => $check_out,
                     'date' => $validated['date'],
@@ -72,7 +70,7 @@ class AttendanceController extends Controller
             if($hours != $workHours){ 
                 $salaryAction=  $this->getSalaryAction($hours,$empsalary,$workHours);
             
-       
+            
             // create salary action
         
              $attendance->salaryAction()->create([
@@ -96,23 +94,28 @@ class AttendanceController extends Controller
     }
     
     public function show(attendance $attendance){
-        $attendance= attendance::find($attendance);
+        $attendance= attendance::with('employee.department')->find($attendance);
+        if(!$attendance){
+            return response()->json([
+                'alert'=>'no record found'
+            ],400);
+        }
         return response()->json([
                 'message'=>'attendance',
-                'attendance'=>$attendance,
-                201
-            ]);
+                'attendance'=>$attendance
+            ],
+            200);
         
     }
 
     public function update(Request $request,attendance $attendance){
         $validated=$request->validate([
-            'employee_id'=>'required|exists:employees,id',
+            'employee_name'=>'required|exists:employees,name',
             'weekend_id'=>'nullable',
             'holiday_id'=>'nullable',
             'check_in'=>'required|date_format:H:i:s',
             'check_out'=>'required|date_format:H:i:s', 
-            'date'=>'required|date_format:Y-m-d', 
+            'date'=>'required|date_format:d-m-Y', 
           
         ]);
 
@@ -134,6 +137,12 @@ class AttendanceController extends Controller
                         'message'=>'No attendance recorded on Holidays.',200
                     ]) ; 
                         }
+                        
+            //check for employee existance
+            $employee=employee::with('department')->where('name',$validated['employee_name'])->first();
+            if(!$employee){
+                return response()->json(["error"=>"employee with this name does Not exist"],400);
+            }
         $attendance->update([
             'employee_id'=>$validated['employee_id'],
             'weekend_id'=>$validated['weekend_id'],
@@ -174,7 +183,7 @@ class AttendanceController extends Controller
            'message' => 'Attendance added successfully',
            'attendance' => $attendance,
            'hours' => $hours,
-           'status' => $status,201 ]);
+           'status' => $status ],201);
 
 
 
@@ -182,9 +191,9 @@ class AttendanceController extends Controller
     public function destroy(attendance $attendance){
         $attendance->delete();
         return response()->json([
-            'message'=>'attendance deleted successfully',
+            'message'=>'attendance deleted successfully'],
             
-             201]);
+            201);
         
 
     }
