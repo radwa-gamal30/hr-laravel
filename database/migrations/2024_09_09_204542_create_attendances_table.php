@@ -21,9 +21,7 @@ return new class extends Migration
             $table->time('check_out');
             $table->date('date');
             $table->decimal('hours', 5, 2);
-
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
-        
             $table->foreign('weekend_id')->references('id')->on('weekends')->onDelete('set null');
             $table->foreign('holiday_id')->references('id')->on('holidays')->onDelete('set null');
             $table->timestamps();

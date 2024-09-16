@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Route::post('users', [UserController::class, 'store']);
-
+Route::resource('salaryaction', Salary_actionController::class);
 Route::apiResource('holidays',HolidayController::class);
 Route::resource('users', UserController::class);
 Route::get('/employee/{id}',[EmployeeController::class,'netSalary']);
