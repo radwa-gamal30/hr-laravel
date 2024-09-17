@@ -57,25 +57,30 @@ class Authenticate extends Middleware
     /**
      * Handle an incoming request.
      */
-    public function handle($request, Closure $next, ...$guards)
+    protected function redirectTo(Request $request): ?string
     {
-        $this->authenticate($request, $guards);  // This is the default method that checks authentication
+        // Check if the request expects a JSON response (for API requests)
+        if (!$request->expectsJson()) {
+            // For non-JSON requests, you can redirect to a login page (like in web apps)
+            return route('login');
+        }
+
+        // For API requests, return null to avoid redirecting and allow throwing an unauthenticated error
+        return null;
+    }
+
+    public function handle($request, \Closure $next, ...$guards)
+    {
+        try {
+            $this->authenticate($request, $guards);
+        } catch (\Illuminate\Auth\AuthenticationException $e) {
+            // Handle unauthenticated request and return a custom message for API
+            return response()->json(['message' => 'You are not authenticated'], 401);
+        }
 
         return $next($request);
     }
-
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     */
-    // protected function redirectTo(Request $request): ?string
-    // {
-    //     // If the request expects JSON, return null and handle it in unauthenticated()
-    //     return $request->expectsJson() ? null : route('login');
-    // }
-
-    /**
-     * Handle an unauthenticated user.
-     */
+       
     protected function unauthenticated($request, array $guards)
     {
         // Return a JSON response if the user is not authenticated

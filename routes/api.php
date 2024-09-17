@@ -29,13 +29,22 @@ Route::get('/' , function(){
     ) ;
     
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+// Protected routes (only for authenticated users)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('holidays', HolidayController::class);
+    Route::apiResource('salaryActions',Salary_actionController::class);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+});
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('holidays', HolidayController::class);
-});
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::apiResource('holidays', HolidayController::class);
+// });
 
 
 
@@ -50,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::apiResource('attendances',AttendanceController::class);
 
-Route::apiResource('salaryActions',Salary_actionController::class);
+
 
 Route::get('holidays/month/{month}', [HolidayController::class, 'searchByMonth']);
 
