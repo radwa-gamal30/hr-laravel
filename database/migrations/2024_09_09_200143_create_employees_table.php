@@ -22,6 +22,10 @@ return new class extends Migration
             $table->unsignedBigInteger('department_id');
             $table->enum('gender', ['male', 'female']);
             $table->date('doa');
+            $table->time('departure_time')->nullable();   
+            $table->date('date_of_birth')->nullable();    
+            $table->string('nationality', 100)->nullable(); 
+            $table->time('arrival_time')->nullable(); 
             $table->timestamps();
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
         });
