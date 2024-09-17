@@ -137,12 +137,7 @@ class AttendanceController extends Controller
                         'message'=>'No attendance recorded on Holidays.',200
                     ]) ; 
                         }
-                        
-            //check for employee existance
-            $employee=employee::with('department')->where('name',$validated['employee_name'])->first();
-            if(!$employee){
-                return response()->json(["error"=>"employee with this name does Not exist"],400);
-            }
+           
         $attendance->update([
             'employee_id'=>$validated['employee_id'],
             'weekend_id'=>$validated['weekend_id'],
