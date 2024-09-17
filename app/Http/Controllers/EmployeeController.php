@@ -26,18 +26,32 @@ class EmployeeController extends Controller
         return $netSalary;
     }
 
-    public function getEmployeeAttendancesByName( $employeeName)
+    public function search(Request $request)
     {
-        
-        $employee = Employee::where('name', $employeeName)->first();
-        if (!$employee) {
-            return response()->json(['message' => 'No attendances found for this employee'], 404);
-        }
+        $employeeName = $request->input('name');
+        $month = $request->input('month'); 
+        $year = $request->input('year');   
 
-        $employeeId = $employee->id;
-        
-        $attendances = attendance::where('employee_id', $employeeId)->get();
-        return $attendances;
+        $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
+        $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
+
+        $employeeData = Employee::with(['department', 'attendances' => function($query) use ($startOfMonth, $endOfMonth) {
+            
+            $query->whereBetween('date', [$startOfMonth, $endOfMonth]);
+        }])
+        ->where('name', 'LIKE', '%' . $employeeName . '%') 
+        ->get()
+        ->map(function($employee) {
+            return [
+                'name' => $employee->name,
+                'basic_salary' => $employee->basic_salary,
+                'department' => $employee->department->name,
+                'total_attendances' => $employee->attendances->count()
+            ];
+        });
+
+        return response()->json($employeeData);
     }
+
 }
 

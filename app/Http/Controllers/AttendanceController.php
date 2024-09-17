@@ -225,15 +225,24 @@ class AttendanceController extends Controller
         
 
     }
-    public function getAttendancesByDate()
+    public function saveAttendance(Request $request)
     {
-        $date = '2024-09-11';  
+        $validated = $request->validate([
+            'bonus' => 'required|numeric',
+            'deduction' => 'required|numeric',
+            'weekendDay1' => 'required|string',
+            'weekendDay2' => 'required|string',
+        ]);
 
-        try {
-            $attendances = Attendance::whereDate('date', $date)->get();
-            return response()->json($attendances);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        $attendance = Attendance::first(); 
+        $attendance->bonus_value = $validated['bonus'];
+        $attendance->deduction_value = $validated['deduction'];
+        $attendance->save();
+
+        Weekend::create(['day' => $validated['weekendDay1']]);
+        Weekend::create(['day' => $validated['weekendDay2']]);
+
+        return response()->json(['message' => 'Attendance data saved successfully']);
     }
+
 }

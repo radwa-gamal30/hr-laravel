@@ -16,6 +16,6 @@ class Privilege extends Model
 
     public function groups()
     {
-        return $this->hasMany(Group::class, 'privileges_id');
+        return $this->belongsToMany(Group::class, 'group_privileges');
     }
 }

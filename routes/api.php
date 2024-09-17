@@ -75,5 +75,4 @@ Route::resource('users', UserController::class);
 Route::get('/employee/{id}',[EmployeeController::class,'netSalary']);
 Route::resource('weekend', WeekendController::class);
 Route::resource('attendance', AttendanceController::class);
-Route::get('employee/attendances/{name}', [EmployeeController::class, 'getEmployeeAttendancesByName']);
-Route::get('/attendances-by-date', [AttendanceController::class, 'getAttendancesByDate']);
+Route::get('/employee/search', [EmployeeController::class, 'search']);

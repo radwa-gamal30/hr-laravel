@@ -6,17 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 
-class group extends Model
+class Group extends Model
 {
     use HasFactory;
     protected $table='groups';
     protected $fillable = [
-       'id', 'name', 'privileges_id'
+       'id', 'name'
     ];
 
     public function privileges()
     {
-        return $this->belongsTo(Privilege::class, 'privileges_id');
+        return $this->belongsToMany(Privilege::class, 'group_privileges');
     }
 
     public function users()
