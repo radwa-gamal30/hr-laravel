@@ -18,6 +18,8 @@ class Employee extends Model
         'department_id',
         'gender',
         'doa',
+        'check_in',
+        'check_out'
     ];
     public function department()
     {

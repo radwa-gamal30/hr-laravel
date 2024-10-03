@@ -6,14 +6,13 @@ use App\Models\attendance;
 use App\Models\employee;
 use App\Models\group;
 use App\Models\User;
-
-
+use App\Models\user_register;
 
 class dashboardController extends Controller
 {
     public function getCounts(){
         $totalEmployees=employee::count();
-        $totalUsers=User::count();
+        $totalUsers=user_register::count();
         $totalAttendanceReps=attendance::count();
         $totalgroups=group::count();
         return response()->json([

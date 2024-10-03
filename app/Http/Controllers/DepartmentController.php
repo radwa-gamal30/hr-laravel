@@ -9,7 +9,7 @@ class DepartmentController extends Controller
 {
     public function index(){
         $departments=department::get();
-        return response()->json(['data'=>$departments]);
+        return response()->json(['department'=>$departments]);
     }
    
      public function store(Request $request){
@@ -20,7 +20,7 @@ class DepartmentController extends Controller
         department::create($request->all());
         return response()->json([
             'message' => 'department added successfully',
-            'recently added'=>$department],201
+            'department'=>$department],201
             );
     }
     public function show(department $department){
@@ -37,14 +37,14 @@ class DepartmentController extends Controller
         $department->update($request->all());
         return response()->json([
             'message' => 'department updated successfully',
-            'recently updated'=>$department],201
+            'department'=>$department],201
             );
     }
      public function destroy(department $department){
         $department->delete();
         return response()->json([
             'message'=>'department deleted successfully',
-            'recently deleted'=>$department
+            'department'=>$department
         ],201);
     
      }

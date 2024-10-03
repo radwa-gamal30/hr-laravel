@@ -11,12 +11,12 @@ class Group extends Model
     use HasFactory;
     protected $table='groups';
     protected $fillable = [
-       'id', 'name'
+       'id', 'name', 'privileges_id'
     ];
 
     public function privileges()
     {
-        return $this->belongsToMany(Privilege::class, 'group_privileges');
+        return $this->belongsToMany(Privilege::class, 'group_privileges', 'group_id', 'privileges_id');
     }
 
     public function users()

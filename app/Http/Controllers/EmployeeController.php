@@ -6,25 +6,28 @@ use App\Models\department;
 use App\Models\employee;
 use App\Models\Salary_actions;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
     public function index(){
         $employees=employee::with('department')->get();
-        return response()->json(['data'=>$employees],200);
+        return response()->json(['employee'=>$employees],200);
     }
     public function store(Request $request){
         $validated=$request->validate([
             'name'=>"required|min:3|string|max:255",
             'phone'=>"required|max:15",
             'salary'=>"required|numeric",
-            'hire_date'=>"required|date_format:Y-m-d",
+            'hire_date'=>"required|date_format:Y-m-d|after-or-equal:2008-01-01",
             'ssn'=>"required|min:14|unique:employees,ssn",
             'address'=>"required|string|max:255",
             'department_id'=>"required|numeric|exists:departments,id",
             'gender'=>"required|in:male,female",
-            'doa'=>"required|date_format:Y-m-d"
+            'doa'=>"required|date_format:Y-m-d|after-or-equal:2008-01-01",
+            'check_in'=>"required|date_format:H:i",
+            'check_out'=>"required|date_format:H:i",
         ]);
       
 
@@ -38,60 +41,86 @@ class EmployeeController extends Controller
             'department_id'=>$validated['department_id'],
             'gender'=>$validated['gender'],
             'doa'=>$validated['doa'],
+            'check_in'=>$validated['check_in'],
+            'check_out'=>$validated['check_out'],
+
         ]);
-       
-        // return response()->json([
-        //     'message'=>"employee added successfully",
-        //     'recently added'=>$employee
-        // ],201);
+
         return response()->json(['message' => 'employee added successfully',
-        'recently added' => $employee], 201);
+        'employee' => $employee], 201);
 
     }
 
-    public function show(employee $employee){
-        $employee=employee::with('department')->find($employee);
+    public function show(String $id){
+        $employee=employee::with('department')->find($id);
         return response()->json([
             'employee'=>$employee,
             'status'=>200
         ],200);
     }
-    public function update(Request $request,employee $employee){
+    public function update(Request $request,string $id){
+        $employee=Employee::with('department')->find($id);
         $validated=$request->validate([
             'name'=>"required|min:3|string|max:255",
             'phone'=>"required|max:15",
             'salary'=>"required|numeric",
-            'hire_date'=>"required|date_format:Y-m-d",
-            'ssn'=>"required|min:14|unique:employees,ssn",
+            'hire_date'=>"required|date_format:Y-m-d|after-or-equal:2008-01-01",
+            'ssn' => [
+                'required',
+                'numeric',
+                function ($attribute, $value, $fail) use ($employee) {
+                    if ($value !== $employee->ssn && Employee::where('ssn', $value)->exists()) {
+                        
+                            $fail('The ssn has already been taken.');
+                        
+                    }
+                }
+            ],
             'address'=>"required|string|max:255",
-            'department_name'=>"required|string|max:255|unique:departments,name",
+            'department_id'=>"required|numeric|exists:departments,id",
             'gender'=>"required|in:male,female",
-            'doa'=>"required|date_format:Y-m-d",
+            'doa'=>"required|date_format:Y-m-d|after-or-equal:2008-01-01",
+            'check_in'=>"required|date_format:H:i",
+            'check_out'=>"required|date_format:H:i",
         ]);
         //check for dept existance
-        $department=department::firstOrCreate(['name',$validated['department_name']]);
+         
+    if (!$employee) {
+        return response()->json(['error' => 'Employee not found'], 404);
+    }
 
-        $employee->update([
-            'name'=>$validated['name'],
-            'phone'=>$validated['phone'],
-            'salary'=>$validated['salary'],
-            'hire_date'=>$validated['hire_date'],
-            'ssn'=>$validated['ssn'],
-            'address'=>$validated['address'],
-            'department_id'=>$department->id,
-            'gender'=>$validated['gender'],
-            'doa'=>$validated['doa'],
-        ]);
+    $employee->update([
+        'name'=>$validated['name'],
+        'phone'=>$validated['phone'],
+        'salary'=>$validated['salary'],
+        'hire_date'=>$validated['hire_date'],
+        'ssn'=>$validated['ssn'],
+        'address'=>$validated['address'],
+        'department_id'=>$validated['department_id'],
+        'gender'=>$validated['gender'],
+        'doa'=>$validated['doa'],
+        'check_in'=>$validated['check_in'],
+        'check_out'=>$validated['check_out'],
+    ]);
+
+
         return response()->json([
             'message'=>"employee updated successfully",
-            'recently updated'=>$employee
+            'employee'=>$employee
         ],201);
     }
-    public function destroy(Request $request,employee $employee){
-        $employee->delete();
+    public function destroy( String $id){
+        $employee=Employee::find($id);
+
+    if (!$employee) {
+        return response()->json(['error' => 'Employee not found'], 404);
+    }
+
+    $employee->delete();
+      
         return response()->json([
            'message'=>"employee deleted successfully",
-            'employee_deleted'=>$employee
+            'employee'=>$employee
         ],201);
 
     }
@@ -131,7 +160,7 @@ class EmployeeController extends Controller
         ->map(function($employee) {
             return [
                 'name' => $employee->name,
-                'basic_salary' => $employee->basic_salary,
+                'basic_salary' => $employee->salary,
                 'department' => $employee->department->name,
                 'total_attendances' => $employee->attendances->count()
             ];

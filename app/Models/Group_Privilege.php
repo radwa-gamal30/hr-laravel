@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Group_Privilege extends Model
 {
     use HasFactory;
+    protected $table = 'group_privileges';
     protected $fillable = [
-        'id', 'privileges_id','group_id'
+        'privileges_id','group_id'
      ];
 }

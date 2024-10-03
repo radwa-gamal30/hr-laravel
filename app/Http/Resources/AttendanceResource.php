@@ -22,6 +22,8 @@ class AttendanceResource extends JsonResource
             'status'=> $this->status ,
             'check_in'=> $this->check_in ,
             'check_out'=> $this->check_out ,
+            'bonus_value'=> $this->bonus_value ,
+            'deduction_value'=> $this->deduction_value ,
             'date'=> $this->date ,
             'hours'=> $this->hours ,
             'created_at'=> $this->created_at ,
