@@ -42,7 +42,7 @@ class AttendanceController extends Controller
         ->where('date',$validated['date'])
         ->first();
         if($existedAttendance){
-            return response()->json(['message'=>'dublicate attendance record !']);
+            return response()->json(['message'=>'dublicate attendance record !'],409);
         }
         $validated = $request;
         
@@ -174,7 +174,7 @@ class AttendanceController extends Controller
     }
 
     public function update(Request $request,string $id){
-        $attendance=attendance::with('employee.department')->find($id);
+        $attendance=attendance::with('generalSetting','employee.department')->find($id);
        
     
    
@@ -185,14 +185,16 @@ class AttendanceController extends Controller
         'check_in'=>'required|date_format:H:i',
         'check_out'=>'required|date_format:H:i', 
         'date' => 'required|date_format:Y-m-d|after-or-equal:2008-01-01',
-        'general_settings_id' => 'required|numeric|exists:general_settings,id|in:1',
+        // 'general_settings_id' => 'required|numeric|exists:general_settings,id|in:1',
 
     ]);
+
     $existedAttendance=Attendance::where('employee_id',$validated['employee_id'])
     ->where('date',$validated['date'])
+    ->where('id','!=',$id)
     ->first();
     if($existedAttendance){
-        return response()->json(['message'=>'dublicate attendance record !']);
+        return response()->json(['message'=>'dublicate attendance record !'],409);
     }
     $validated = $request;
     $check_in = Carbon::parse($validated['check_in']);
@@ -215,6 +217,7 @@ class AttendanceController extends Controller
             'message' => 'No attendance recorded on holidays.',
         ], 200);
     }
+    $generalSetting=GeneralSettings::first();
 
     
     $attendance->update([
@@ -224,14 +227,14 @@ class AttendanceController extends Controller
         'check_in' => $check_in,
         'check_out' => $check_out,
         'date' => $validated['date'],
-        'general_settings_id' => 1,
+        'general_settings_id' =>$generalSetting->id,
         'hours' => $hours,
         'status' => $status,
     ]);
 
     
-    $add_ons = $attendance->generalSetting->add_ons;
-    $discount = $attendance->generalSetting->discount;
+    $add_ons = $generalSetting->add_ons;
+    $discount = $generalSetting->discount;
 
     $empsalary = $attendance->employee->base_salary;
     $empCheck_in = Carbon::parse($attendance->employee->check_in); 
